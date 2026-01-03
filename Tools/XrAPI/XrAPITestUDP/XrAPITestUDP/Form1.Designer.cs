@@ -114,6 +114,9 @@
             btnKeyEmulationControls = new Button();
             label2 = new Label();
             txtRumbleData = new TextBox();
+            groupBox1 = new GroupBox();
+            chkIsSBS = new CheckBox();
+            chkIsImmersive = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)tbOXRFrameId).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbRQX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbRQY).BeginInit();
@@ -131,6 +134,7 @@
             ((System.ComponentModel.ISupportInitialize)tbHQZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbHQY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbHQX).BeginInit();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // btnSendFrame
@@ -349,6 +353,7 @@
             chkLTHUMBRIGHT.TabIndex = 22;
             chkLTHUMBRIGHT.Text = "L_THUMB_RIGHT";
             chkLTHUMBRIGHT.UseVisualStyleBackColor = true;
+            chkLTHUMBRIGHT.CheckedChanged += chkLTHUMBRIGHT_CheckedChanged;
             // 
             // chkLTHUMBLEFT
             // 
@@ -937,12 +942,46 @@
             txtRumbleData.TabIndex = 97;
             txtRumbleData.Text = "0.000 0.000";
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(chkIsSBS);
+            groupBox1.Controls.Add(chkIsImmersive);
+            groupBox1.Location = new Point(329, 274);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(178, 52);
+            groupBox1.TabIndex = 98;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "API V0.3";
+            // 
+            // chkIsSBS
+            // 
+            chkIsSBS.AutoSize = true;
+            chkIsSBS.Location = new Point(112, 22);
+            chkIsSBS.Name = "chkIsSBS";
+            chkIsSBS.Size = new Size(59, 19);
+            chkIsSBS.TabIndex = 100;
+            chkIsSBS.Text = "IS_SBS";
+            chkIsSBS.UseVisualStyleBackColor = true;
+            chkIsSBS.CheckedChanged += chkIsSBS_CheckedChanged;
+            // 
+            // chkIsImmersive
+            // 
+            chkIsImmersive.AutoSize = true;
+            chkIsImmersive.Location = new Point(6, 22);
+            chkIsImmersive.Name = "chkIsImmersive";
+            chkIsImmersive.Size = new Size(100, 19);
+            chkIsImmersive.TabIndex = 99;
+            chkIsImmersive.Text = "IS_IMMERSIVE";
+            chkIsImmersive.UseVisualStyleBackColor = true;
+            chkIsImmersive.CheckedChanged += chkIsImmersive_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(1508, 234);
+            ClientSize = new Size(1508, 235);
+            Controls.Add(groupBox1);
             Controls.Add(txtRumbleData);
             Controls.Add(label2);
             Controls.Add(btnKeyEmulationControls);
@@ -1047,6 +1086,8 @@
             ((System.ComponentModel.ISupportInitialize)tbHQZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbHQY).EndInit();
             ((System.ComponentModel.ISupportInitialize)tbHQX).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1137,5 +1178,8 @@
         private Button btnKeyEmulationControls;
         private Label label2;
         private TextBox txtRumbleData;
+        private GroupBox groupBox1;
+        private CheckBox chkIsSBS;
+        private CheckBox chkIsImmersive;
     }
 }

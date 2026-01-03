@@ -162,7 +162,7 @@ namespace XrAPITestUDP
                 }
                 catch (Exception e)
                 {
-                    
+
                 }
             }
         }
@@ -1168,6 +1168,10 @@ namespace XrAPITestUDP
             newUDPData += (chkRTHUMBDOWN.Checked ? "T" : "F");
             newUDPData += (chkRTRIGGER.Checked ? "T" : "F");
 
+            //V0.3 added data
+            newUDPData += (chkIsImmersive.Checked ? "T" : "F");
+            newUDPData += (chkIsSBS.Checked ? "T" : "F");
+
             //Add HMD
             newUDPData += " " + txtHMD.Text;
 
@@ -1371,6 +1375,10 @@ namespace XrAPITestUDP
                 chkRTHUMBUP.Checked = ParseBtnBool(btnbools, 16);
                 chkRTHUMBDOWN.Checked = ParseBtnBool(btnbools, 17);
                 chkRTRIGGER.Checked = ParseBtnBool(btnbools, 18);
+
+                //V0.3
+                chkIsImmersive.Checked = ParseBtnBool(btnbools, 19);
+                chkIsSBS.Checked = ParseBtnBool(btnbools, 20);
             }
         }
 
@@ -1410,6 +1418,21 @@ namespace XrAPITestUDP
         private void btnKeyEmulationControls_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", Path.Combine(Application.StartupPath, "XrAPITestUDPEmulatedControls.png"));
+        }
+
+        private void chkIsImmersive_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkIsSBS_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkLTHUMBRIGHT_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
