@@ -26,6 +26,8 @@ Thanks to Luboš for his work on [WinlatorXR](https://github.com/lvonasek/Winlat
 
 Thanks to GmoLargey for testing!
 
+Thanks to ☆- Tee -☆ from the TeamBeef Discord for the idea of the combined Use + Reload button mode (in the ConfTool)
+
 # Current way of running the game in WinlatorXR:
 
 * Build the d3d9 DLL
