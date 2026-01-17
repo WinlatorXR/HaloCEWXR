@@ -149,6 +149,57 @@ namespace HWXR_ConfEdit
             }
         }
 
+        private void ReplaceConfFileLine(string findLineText, string replaceWith, string erase = "")
+        {
+            try
+            {
+                string confPath = Path.Combine(Application.StartupPath, confFile);
+                if (File.Exists(confPath))
+                {
+                    bool foundLine = false;
+
+                    string[] lines = File.ReadAllLines(confPath);
+
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        if (lines[i].Contains(findLineText))
+                        {
+                            foundLine = true;
+
+                            if (erase != "")
+                            {
+                                lines[i] = lines[i].Replace(erase, "").Replace(findLineText, replaceWith);
+                            }
+                            else
+                            {
+                                lines[i] = lines[i].Replace(findLineText, replaceWith);
+                            }
+                        }
+                    }
+
+                    if (foundLine)
+                    {
+                        if (File.Exists(confPath + ".bak"))
+                        {
+                            File.Delete(confPath + ".bak");
+                        }
+
+                        File.Move(confPath, confPath + ".bak");
+
+                        File.WriteAllLines(confPath, lines);
+
+                        lblSaved.Visible = true;
+                        timSaveTimer.Enabled = true;
+                        timSaveTimer.Start();
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             /*
@@ -173,6 +224,28 @@ namespace HWXR_ConfEdit
             EditConfFile("MeleeSwingVelocitySensitivity = ", tbSwingSens.Value.ToString());
             EditConfFile("DisableThumbstickMovement = ", chkDisableThumbMove.Checked.ToString().ToLower());
             EditConfFile("DisableThumbstickRotation = ", chkDisableThumbTurn.Checked.ToString().ToLower());
+            EditConfFile("SnapTurn = ", chkSnapTurn.Checked.ToString().ToLower());
+
+            if (chkAER.Checked)
+            {
+                EditConfFile("MirrorEye = ", "1");
+            }
+            else
+            {
+                EditConfFile("MirrorEye = ", "0");
+            }
+
+            if (chkCombineReloadUse.Checked)
+            {
+                //Flip it negative but don't overwrite its value
+                ReplaceConfFileLine("HandRelativeMovement = 0", "HandRelativeMovement = -3", "-");
+                ReplaceConfFileLine("HandRelativeMovement = ", "HandRelativeMovement = -", "-");
+            }
+            else
+            {
+                ReplaceConfFileLine("HandRelativeMovement = ", "HandRelativeMovement = ", "-");
+                ReplaceConfFileLine("HandRelativeMovement = 3", "HandRelativeMovement = 0", "-");
+            }
 
         }
 
@@ -337,6 +410,44 @@ namespace HWXR_ConfEdit
         private void varD_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void chkAER_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAER.Checked)
+            {
+                chkAER.Text = "TRUE";
+            }
+            else
+            {
+                chkAER.Text = "FALSE";
+            }
+        }
+
+        private void chkSnapTurn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSnapTurn.Checked)
+            {
+                chkSnapTurn.Text = "TRUE";
+                lblSmoothTurn.Visible = false;
+            }
+            else
+            {
+                chkSnapTurn.Text = "FALSE";
+                lblSmoothTurn.Visible = true;
+            }
+        }
+
+        private void chkCombineReloadUse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkCombineReloadUse.Checked)
+            {
+                chkCombineReloadUse.Text = "TRUE";
+            }
+            else
+            {
+                chkCombineReloadUse.Text = "FALSE";
+            }
         }
     }
 }
