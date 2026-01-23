@@ -95,6 +95,8 @@ NOTE: If you start this on a PC or other device and it doesn't get past the load
 * Support for moving freely without a boundary (virtual body move to catch up to HMD movements), with scalable walking IRL vs movement in-game, disabled by default
 * Ability to disable thumbstick move (automatically enables the above boundless mode)
 * Ability to disable thumbstick turn entirely
+* AER stereo 3D support
+* Optional mode to combine Reload and Use buttons
 
 
 # Stretch-Goal(s) / Unlikely Bonus Features:
