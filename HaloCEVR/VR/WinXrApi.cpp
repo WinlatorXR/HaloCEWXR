@@ -301,9 +301,15 @@ void WinXrApi::Init()
 	Logger::log << "[WinXrApi] starting UDP listener ..." << std::endl;
 	udpReader = new WinXrApiUDP();
 
+	std::string aerMode = "0";
+
+	if (Game::instance.bEnableAltEyeRendering) {
+		aerMode = "2";
+	}
+
 	if (udpReader) {
 		//Now we send the VR mode enable and target FOV of WinlatorXR at startup
-		udpReader->SendData("0 0 1 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+		udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
 	}
 }
 
@@ -415,15 +421,29 @@ void WinXrApi::Shutdown()
 void WinXrApi::SendHapticVibration(float lControllerStrength, float rControllerStrength) {
 	bool sendHaptics = Game::instance.c_EnableHaptics->Value();
 
+	std::string aerMode = "0";
+
+	if (Game::instance.bEnableAltEyeRendering) {
+		aerMode = "2";
+	}
+
 	if (udpReader) {
 		//As of version 0.2 now we send a bit of extra UDP data always (LVibration, RVibration, VR mode, SBS, target FOV W, target FOV H), WinlatorXR does the rest
 		if (sendHaptics) {
-			udpReader->SendData(std::to_string(lControllerStrength) + " " + std::to_string(rControllerStrength) + " 1 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			udpReader->SendData(std::to_string(lControllerStrength) + " " + std::to_string(rControllerStrength) + " 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
 		}
 		else {
-			udpReader->SendData("0 0 1 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
 		}
 	}
+}
+
+int WinXrApi::GetViewWidth() {
+	return GetSystemMetrics(SM_CXSCREEN);
+}
+
+int WinXrApi::GetViewHeight() {
+	return GetSystemMetrics(SM_CYSCREEN);
 }
 
 void WinXrApi::UpdatePoses()
@@ -582,7 +602,7 @@ void WinXrApi::UpdatePoses()
 
 void WinXrApi::UpdateCameraFrustum(CameraFrustum* frustum, int eye)
 {
-	const float DIST = Game::instance.MetresToWorld(IPDVal / 1000.0f);
+	const float DIST = Game::instance.MetresToWorld(IPDVal / 10.0f);
 
 	Matrix4 headMatrix = GetHMDTransform(true);
 
@@ -600,9 +620,9 @@ void WinXrApi::UpdateCameraFrustum(CameraFrustum* frustum, int eye)
 	Matrix4 viewMatrix = (headMatrix).scale(Game::instance.MetresToWorld(1.0f));
 	Matrix3 rotationMatrix = GetRotationMatrix(headMatrix);
 
-	/*Vector3 rightVec = frustum->facingDirection.cross(frustum->upDirection);
+	Vector3 rightVec = frustum->facingDirection.cross(frustum->upDirection);
 
-	frustum->position += rightVec * DIST * (float)(2 * eye - 1);*/
+	frustum->position += rightVec * DIST * (float)(2 * eye - 1);
 
 	frustum->fov = FOVTotal; // 60 degrees normally
 
@@ -887,9 +907,16 @@ void WinXrApi::UpdateInputs()
 	//{ "Reload", 'R' },
 	//{ "EMU_MoveHandSwap", 'H' }
 
-	//Jump
-	bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
-	bindings[0].bPressed = LGrip;
+	if (Game::instance.bCombineUseReload) {
+		//Jump
+		bindings[0].bHasChanged = R_B != bindings[0].bPressed;
+		bindings[0].bPressed = R_B;
+	}
+	else {
+		//Jump
+		bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
+		bindings[0].bPressed = LGrip;
+	}	
 
 	//Switch Grenades
 	bindings[1].bHasChanged = L_X != bindings[1].bPressed;
@@ -931,9 +958,16 @@ void WinXrApi::UpdateInputs()
 	bindings[10].bHasChanged = LTrigger != bindings[10].bPressed;
 	bindings[10].bPressed = LTrigger;
 
-	//Reload
-	bindings[11].bHasChanged = R_B != bindings[11].bPressed;
-	bindings[11].bPressed = R_B;
+	if (Game::instance.bCombineUseReload) {
+		//Reload
+		bindings[11].bHasChanged = R_A != bindings[11].bPressed;
+		bindings[11].bPressed = R_A;
+	}
+	else {
+		//Reload
+		bindings[11].bHasChanged = R_B != bindings[11].bPressed;
+		bindings[11].bPressed = R_B;
+	}
 
 	//Looking
 	axes1D[2] = RThumbstick.x;
@@ -1230,6 +1264,28 @@ void WinXrApi::PreDrawFrame(struct Renderer* renderer, float deltaTime)
 		}
 
 		Game::instance.inGameRenderer.DrawRenderTarget(uiTexture, pos, rot, size, false);
+
+		//AER toggle on/off
+		if (R_A) {
+			if (!R_A_Once) {
+				Game::instance.bEnableAltEyeRendering = !Game::instance.bEnableAltEyeRendering;
+				R_A_Once = true;
+			}
+		}
+		else {
+			R_A_Once = false;
+		}
+
+		//Always two-handed on/off
+		if (R_B) {
+			if (!R_B_Once) {
+				Game::instance.bAlwaysTwoHand = !Game::instance.bAlwaysTwoHand;
+				R_B_Once = true;
+			}
+		}
+		else {
+			R_B_Once = false;
+		}
 	}
 	else {
 		Vector3 camPos = Helpers::GetCamera().position;

@@ -337,7 +337,26 @@ void Game::PostDrawEye(struct Renderer* renderer, float deltaTime, int eye)
 	}
 
 	// !!! WinlatorXR specific code change !!!
-	inGameRenderer.OpenXRFrameID = Game::OpenXRFrameID;
+	//inGameRenderer.OpenXRFrameID = Game::instance.OpenXRFrameID;
+
+	if (bEnableAltEyeRendering) {
+		if (bAltEyeRender) {
+			//inGameRenderer.RenderEyeValue = 255;
+			//Game::instance.
+			RenderEyeValue = 255;
+		}
+		else {
+			//inGameRenderer.RenderEyeValue = 128;
+			//Game::instance.
+			RenderEyeValue = 0;
+		}
+	}
+	else {
+		//inGameRenderer.RenderEyeValue = 0;
+		//Game::instance.
+		RenderEyeValue = 0;
+	}
+
 	inGameRenderer.Render(Helpers::GetDirect3DDevice9());
 }
 
@@ -535,7 +554,14 @@ void Game::PostDrawFrame(struct Renderer* renderer, float deltaTime)
 		}
 
 
-		int eye = mirrorSource == ERenderState::LEFT_EYE ? 0 : 1;
+		int eye = 0; //mirrorSource == ERenderState::LEFT_EYE ? 0 : 1;
+
+		if (bAltEyeRender) {
+			eye = 1;
+		}
+		else {
+			eye = 0;
+		}
 
 		IDirect3DSurface9* currentSurface = nullptr;
 		Helpers::GetDirect3DDevice9()->GetRenderTarget(0, &currentSurface);
@@ -544,6 +570,19 @@ void Game::PostDrawFrame(struct Renderer* renderer, float deltaTime)
 		Helpers::GetDirect3DDevice9()->SetRenderTarget(0, currentSurface);
 		currentSurface->Release();
 		Helpers::GetDirect3DDevice9()->StretchRect(vr->GetRenderSurface(eye), nullptr, Helpers::GetRenderTargets()[0].renderSurface, &destRect, D3DTEXF_LINEAR);
+	}
+
+	if (bEnableAltEyeRendering) {
+		if (bAltEyeRender)
+		{
+			bAltEyeRender = false;
+		}
+		else {
+			bAltEyeRender = true;
+		}
+	}
+	else {
+		bAltEyeRender = false;
 	}
 
 	VR_PROFILE_STOP(Game_PostDrawFrame);
@@ -558,7 +597,7 @@ bool Game::PreDrawHUD()
 	VR_PROFILE_SCOPE(Game_PreDrawHUD);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		// Remove zoom effect from game view
 		if (GetRenderState() == ERenderState::GAME)
@@ -601,7 +640,7 @@ void Game::PostDrawHUD()
 	VR_PROFILE_SCOPE(Game_PostDrawHUD);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		// Remove zoom effect from game view
 		if (GetRenderState() == ERenderState::GAME)
@@ -632,7 +671,7 @@ bool Game::PreDrawMenu()
 	VR_PROFILE_SCOPE(Game_PreDrawMenu);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		// ...but try to avoid breaking the game view (for now at least)
 		return GetRenderState() == ERenderState::GAME;
@@ -651,7 +690,7 @@ void Game::PostDrawMenu()
 	VR_PROFILE_SCOPE(Game_PostDrawMenu);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		return;
 	}
@@ -701,7 +740,7 @@ bool Game::PreDrawLoading(int param1, struct Renderer* renderer)
 	VR_PROFILE_SCOPE(Game_PreDrawLoading);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		// ...but try to avoid breaking the game view (for now at least)
 		return GetRenderState() == ERenderState::GAME;
@@ -718,7 +757,7 @@ void Game::PostDrawLoading(int param1, struct Renderer* renderer)
 	VR_PROFILE_SCOPE(Game_PostDrawLoading);
 
 	// Only render UI once per frame
-	if (GetRenderState() != ERenderState::LEFT_EYE)
+	if (GetRenderState() != ERenderState::LEFT_EYE && GetRenderState() != ERenderState::RIGHT_EYE)
 	{
 		return;
 	}
@@ -1139,6 +1178,20 @@ void Game::SetupConfigs()
 
 	//WinlatorXR forced
 	mirrorSource = ERenderState::LEFT_EYE;
+
+	if (c_MirrorEye->Value() == 0) {
+		bEnableAltEyeRendering = false;
+	}
+	else {
+		bEnableAltEyeRendering = true;
+	}
+
+	if (c_HandRelativeMovement->Value() < 0) {
+		bCombineUseReload = true;
+	}
+	else {
+		bCombineUseReload = false;
+	}
 
 	/*if (c_MirrorEye->Value() == 0)
 	{

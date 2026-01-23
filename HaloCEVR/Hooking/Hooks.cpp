@@ -335,7 +335,7 @@ void Hooks::H_DrawFrame(Renderer* param1, short param2, short* param3, float tic
 	*/
 
 	bool bDrawMirror = Game::instance.GetDrawMirror();
-	
+
 	Camera trueCamera;
 
 	// Chimera does its own thing with camera interpolation, steal that for the camera position during rendering
@@ -364,23 +364,35 @@ void Hooks::H_DrawFrame(Renderer* param1, short param2, short* param3, float tic
 		reinterpret_cast<IDirect3DDevice9ExWrapper*>(Helpers::GetDirect3DDevice9())->bIgnoreNextEnd = true;
 	}
 
-	// Draw left eye
-	Game::instance.PreDrawEye(param1, deltaTime, 0);
-	VR_PROFILE_START(Hooks_DrawFrame_DrawLeftEye);
-	DrawFrame.Original(param1, param2, param3, tickProgress, deltaTime);
-	VR_PROFILE_STOP(Hooks_DrawFrame_DrawLeftEye);
-	Game::instance.PostDrawEye(param1, deltaTime, 0);
+	if (!Game::instance.bAltEyeRender) {
+		// Draw left eye
+		Game::instance.PreDrawEye(param1, deltaTime, 0);
+		VR_PROFILE_START(Hooks_DrawFrame_DrawLeftEye);
+		DrawFrame.Original(param1, param2, param3, tickProgress, deltaTime);
+		VR_PROFILE_STOP(Hooks_DrawFrame_DrawLeftEye);
+		Game::instance.PostDrawEye(param1, deltaTime, 0);
+	}
+	else
+	{
+		// Draw right eye
+		Game::instance.PreDrawEye(param1, deltaTime, 1);
+		VR_PROFILE_START(Hooks_DrawFrame_DrawRightEye);
+		DrawFrame.Original(param1, param2, param3, tickProgress, deltaTime);
+		VR_PROFILE_STOP(Hooks_DrawFrame_DrawRightEye);
+		Game::instance.PostDrawEye(param1, deltaTime, 1);
+	}
 
 	reinterpret_cast<IDirect3DDevice9ExWrapper*>(Helpers::GetDirect3DDevice9())->bIgnoreNextStart = true;
 	reinterpret_cast<IDirect3DDevice9ExWrapper*>(Helpers::GetDirect3DDevice9())->bIgnoreNextEnd = bDrawMirror;
 
-	//Removed for now - WinlatorXR
-	// Draw right eye
-	/*Game::instance.PreDrawEye(param1, deltaTime, 1);
-	VR_PROFILE_START(Hooks_DrawFrame_DrawRightEye);
-	DrawFrame.Original(param1, param2, param3, tickProgress, deltaTime);
-	VR_PROFILE_STOP(Hooks_DrawFrame_DrawRightEye);
-	Game::instance.PostDrawEye(param1, deltaTime, 1);*/
+	//if (Game::instance.bAltEyeRender) {
+	//	// Draw right eye
+	//	Game::instance.PreDrawEye(param1, deltaTime, 1);
+	//	VR_PROFILE_START(Hooks_DrawFrame_DrawRightEye);
+	//	DrawFrame.Original(param1, param2, param3, tickProgress, deltaTime);
+	//	VR_PROFILE_STOP(Hooks_DrawFrame_DrawRightEye);
+	//	Game::instance.PostDrawEye(param1, deltaTime, 1);
+	//}
 
 	//Removed for now - WinlatorXR
 	// Draw Mirror view, but only if the secret mirror mode is set in settings due to performance cost

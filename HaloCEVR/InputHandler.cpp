@@ -27,7 +27,7 @@ void InputHandler::UpdateRegisteredInputs()
 	IVR* vr = Game::instance.GetVR();
 
 	const char* actionSet = Game::instance.bLeftHanded ? "left handed" : "default";
-	
+
 	// These bindings will change depending on action sets
 	RegisterBoolInput(actionSet, Jump);
 	RegisterBoolInput(actionSet, SwitchGrenades);
@@ -251,16 +251,16 @@ void InputHandler::UpdateInputs(bool bInVehicle)
 
 	Vector2 MoveInput = vr->GetVector2Input(Move);
 
-	if (!bInVehicle && (Game::instance.c_HandRelativeMovement->Value() != 0))
+	if (!bInVehicle && (Game::instance.c_HandRelativeMovement->Value() != 0 && Game::instance.c_HandRelativeMovement->Value() > -3))
 	{
 		Camera& cam = Helpers::GetCamera();
 		Vector3 camForward = cam.lookDir;
 
-		const bool leftHand = (Game::instance.c_HandRelativeMovement->Value() == 1);
+		const bool leftHand = (Game::instance.c_HandRelativeMovement->Value() == 1 || Game::instance.c_HandRelativeMovement->Value() == -1);
 		const ControllerRole role = leftHand ? ControllerRole::Left : ControllerRole::Right;
 		Matrix4 controllerTransform = vr->GetControllerTransform(role); // TODO: Not sure about bRenderPose bool param here. Doesn't seem to matter.
 		const float offset = Game::instance.c_HandRelativeOffsetRotation->Value();
-		controllerTransform.rotateZ(leftHand ? offset: -offset);
+		controllerTransform.rotateZ(leftHand ? offset : -offset);
 		Vector3 handForward = controllerTransform.getLeftAxis();
 
 #if DRAW_DEBUG_MOVE
@@ -374,7 +374,7 @@ void InputHandler::UpdateCameraForVehicles(float& yaw, float& pitch)
 	const float PitchDelta = lookInput.y * Game::instance.c_VerticalVehicleTurnAmount->Value() * Game::instance.lastDeltaTime;
 
 	float yawOffset = vr->GetYawOffset();
-	
+
 	yawOffset += YawDelta;
 
 	vr->SetYawOffset(yawOffset);
@@ -394,7 +394,7 @@ unsigned char InputHandler::UpdateFlashlight()
 
 	bool offhandFlashlightEnabled = Game::instance.c_OffhandHandFlashlight->Value();
 
-	bool checkLeftHand = !offhandFlashlightEnabled || !Game::instance.bLeftHanded; 
+	bool checkLeftHand = !offhandFlashlightEnabled || !Game::instance.bLeftHanded;
 	if (checkLeftHand && leftDistance > 0.0f)
 	{
 		Vector3 handPos = vr->GetRawControllerTransform(ControllerRole::Left) * Vector3(0.0f, 0.0f, 0.0f);
@@ -405,7 +405,7 @@ unsigned char InputHandler::UpdateFlashlight()
 		}
 	}
 
-	bool checkRightHand = !offhandFlashlightEnabled || Game::instance.bLeftHanded; 
+	bool checkRightHand = !offhandFlashlightEnabled || Game::instance.bLeftHanded;
 	if (checkRightHand && rightDistance > 0.0f)
 	{
 		Vector3 handPos = vr->GetRawControllerTransform(ControllerRole::Right) * Vector3(0.0f, 0.0f, 0.0f);
@@ -439,7 +439,7 @@ unsigned char InputHandler::UpdateHolsterSwitchWeapons()
 		handPos = vr->GetRawControllerTransform(ControllerRole::Right) * Vector3(0.0f, 0.0f, 0.0f);
 	}
 
-	if (InputHandler::IsHandInHolster(handPos, leftShoulderPos, Game::instance.c_LeftShoulderHolsterActivationDistance->Value()) 
+	if (InputHandler::IsHandInHolster(handPos, leftShoulderPos, Game::instance.c_LeftShoulderHolsterActivationDistance->Value())
 		|| InputHandler::IsHandInHolster(handPos, rightShoulderPos, Game::instance.c_RightShoulderHolsterActivationDistance->Value()))
 	{
 		return 127;
@@ -476,7 +476,7 @@ unsigned char InputHandler::UpdateMelee()
 		return 127;
 	}
 
-    return 0;
+	return 0;
 }
 
 unsigned char InputHandler::UpdateCrouch()
@@ -553,13 +553,13 @@ bool InputHandler::GetCalculatedHandPositions(Matrix4& controllerTransform, Vect
 		}
 
 		toOffHand.normalize();
-		dominantHandPos = actualControllerPos; 
-		offHand = toOffHand; 
+		dominantHandPos = actualControllerPos;
+		offHand = toOffHand;
 
-		return true; 
+		return true;
 	}
 
-	return false; 
+	return false;
 }
 
 void InputHandler::CalculateSmoothedInput()
@@ -609,7 +609,7 @@ void InputHandler::CalculateSmoothedInput()
 void InputHandler::UpdateHandsProximity()
 {
 	float swapHandDistance = Game::instance.c_SwapHandDistance->Value();
-	
+
 	const Vector3 leftPos = Game::instance.GetVR()->GetControllerTransform(ControllerRole::Left, true) * Vector3(0.0f, 0.0f, 0.0f);
 	const Vector3 rightPos = Game::instance.GetVR()->GetControllerTransform(ControllerRole::Right, true) * Vector3(0.0f, 0.0f, 0.0f);
 	float handDistance = (rightPos - leftPos).lengthSqr();
@@ -636,24 +636,24 @@ void InputHandler::CheckSwapWeaponHand()
 	bool offHandGrabbedWeapon = false;
 	bool dominantHandReleasedWeapon = false;
 
-    if (!Game::instance.bLeftHanded)
-    {
+	if (!Game::instance.bLeftHanded)
+	{
 		offHandGrabbedWeapon = bIsSwitchHandsPressed && bWeaponHandChanged && !bIsOffhandSwitchHandsPressed;
 		dominantHandReleasedWeapon = bIsSwitchHandsPressed && !bIsOffhandSwitchHandsPressed && bOffhandWeaponHandChanged;
-    }
-    else
-    {
-        offHandGrabbedWeapon = bIsOffhandSwitchHandsPressed && bOffhandWeaponHandChanged && !bIsSwitchHandsPressed;
+	}
+	else
+	{
+		offHandGrabbedWeapon = bIsOffhandSwitchHandsPressed && bOffhandWeaponHandChanged && !bIsSwitchHandsPressed;
 		dominantHandReleasedWeapon = bIsOffhandSwitchHandsPressed && !bIsSwitchHandsPressed && bWeaponHandChanged;
-    }
+	}
 
 	if (offHandGrabbedWeapon || dominantHandReleasedWeapon)
-    {
+	{
 		// Enable left handed and update the bindings to use the relevant action set
-        Game::instance.bLeftHanded = !Game::instance.bLeftHanded;
-		
+		Game::instance.bLeftHanded = !Game::instance.bLeftHanded;
+
 		UpdateRegisteredInputs();
-    }
+	}
 }
 
 void InputHandler::UpdateTwoHandedHold(float handDistance, bool handsWithinSwapWeaponDistance)
@@ -666,41 +666,45 @@ void InputHandler::UpdateTwoHandedHold(float handDistance, bool handsWithinSwapW
 	if (handsWithinSwapWeaponDistance)
 	{
 		if (!bIsGripping) {
-	        Game::instance.bUseTwoHandAim = false;
-	    }
+			Game::instance.bUseTwoHandAim = false;
+		}
 		return;
 	}
 
 	if (Game::instance.c_ToggleGrip->Value())
 	{
-	    if (bGripChanged && bIsGripping)
-	    {
-	        bWasGripping ^= true;
-	    }
-	    bIsGripping = bWasGripping;
+		if (bGripChanged && bIsGripping)
+		{
+			bWasGripping ^= true;
+		}
+		bIsGripping = bWasGripping;
 	}
 
 	float twoHandDistance = Game::instance.c_TwoHandDistance->Value();
 	if (twoHandDistance >= 0.0f)
 	{
-	    if (bGripChanged)
-	    {
-	        if (bIsGripping)
-	        {
+		if (bGripChanged)
+		{
+			if (bIsGripping)
+			{
 				if (handDistance < twoHandDistance * twoHandDistance)
-	            {
-	                Game::instance.bUseTwoHandAim = true;
-	            }
-	        }
-	        else
-	        {
-	            Game::instance.bUseTwoHandAim = false;
-	        }
-	    }
+				{
+					Game::instance.bUseTwoHandAim = true;
+				}
+			}
+			else
+			{
+				Game::instance.bUseTwoHandAim = false;
+			}
+		}
 	}
 	else
 	{
-	    Game::instance.bUseTwoHandAim = bIsGripping;
+		Game::instance.bUseTwoHandAim = bIsGripping;
+	}
+
+	if (Game::instance.bAlwaysTwoHand) {
+		Game::instance.bUseTwoHandAim = true;
 	}
 }
 

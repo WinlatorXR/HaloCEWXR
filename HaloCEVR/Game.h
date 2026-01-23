@@ -94,6 +94,12 @@ public:
 	bool bIsReloading = false;
 	bool bLeftHanded = false;
 
+	bool bEnableAltEyeRendering = false;
+	bool bAltEyeRender = false;
+
+	bool bCombineUseReload = false;
+	bool bAlwaysTwoHand = false;
+
 	Config config;
 
 	InGameRenderer inGameRenderer;
@@ -114,6 +120,7 @@ public:
 
 	int OpenXRFrameID = 0;
 	int OpenXRFrameWait = 0;
+	int RenderEyeValue = 0;
 
 #if USE_PROFILER
 	Profiler profiler;

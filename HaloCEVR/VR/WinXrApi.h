@@ -18,8 +18,8 @@ public:
 
 	void UpdateCameraFrustum(struct CameraFrustum* frustum, int eye);
 
-	int GetViewWidth() { return 1400; }
-	int GetViewHeight() { return 1400; }
+	int GetViewWidth();
+	int GetViewHeight();
 	float GetViewWidthStretch() { return 1.0f; }
 	float GetViewHeightStretch() { return 1.0f; }
 	float GetAspect() { return 1.0f; }
@@ -81,7 +81,9 @@ public:
 	bool L_X = false;
 	bool L_Y = false;
 	bool R_A = false;
+	bool R_A_Once = false;
 	bool R_B = false;
+	bool R_B_Once = false;
 	bool L_Menu = false;
 	bool R_ThumbDown = false;
 	bool R_ThumbUp = false;

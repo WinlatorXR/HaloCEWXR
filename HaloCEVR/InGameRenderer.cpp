@@ -508,16 +508,19 @@ void InGameRenderer::DrawRenderTargets(IDirect3DDevice9* pDevice)
 			pDevice->SetTexture(0, renderTargets[i].texture);
 			pDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
 
-			float OpenXRFrameIDFloat = (float)OpenXRFrameID / 255.0f;
+			//float OpenXRFrameIDFloat = (float)OpenXRFrameID / 255.0f;
 
-			int adjustedVal = ((int)pow(OpenXRFrameIDFloat, 1.0 / 2.2) * 255);
+			//int adjustedVal = ((int)pow(OpenXRFrameIDFloat, 1.0 / 2.2) * 255);
+
+			int oxrFrame = Game::instance.OpenXRFrameID;
+			int renderEyeVal = Game::instance.RenderEyeValue;
 
 			//Red pixel square
 			VertexData2D oxrVerts[4] = {
-				{ 0.0f,   0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,OpenXRFrameID, 0, 0) }, // Top-left
-				{ 10.0f,  0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,OpenXRFrameID, 0, 0) }, // Top-right
-				{ 10.0f, 10.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,OpenXRFrameID, 0, 0) }, // Bottom-right
-				{ 0.0f,  10.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,OpenXRFrameID, 0, 0) }  // Bottom-left
+				{ 0.0f,   0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,oxrFrame, 0, renderEyeVal) }, // Top-left
+				{ 10.0f,  0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,oxrFrame, 0, renderEyeVal) }, // Top-right
+				{ 10.0f, 10.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,oxrFrame, 0, renderEyeVal) }, // Bottom-right
+				{ 0.0f,  10.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,oxrFrame, 0, renderEyeVal) }  // Bottom-left
 			};
 
 			/*
