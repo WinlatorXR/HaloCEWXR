@@ -905,7 +905,8 @@ void WinXrApi::UpdateInputs()
 	//{ "Crouch", VK_LCONTROL },
 	//{ "Zoom", 'Z' },
 	//{ "Reload", 'R' },
-	//{ "EMU_MoveHandSwap", 'H' }
+	//{ "EMU_MoveHandSwap", 'H' },
+	//{ "TwoHandGrip", 'I' }
 
 	if (Game::instance.bCombineUseReload) {
 		//Jump
@@ -968,6 +969,12 @@ void WinXrApi::UpdateInputs()
 		bindings[11].bHasChanged = R_B != bindings[11].bPressed;
 		bindings[11].bPressed = R_B;
 	}
+
+	if (Game::instance.bCombineUseReload) {
+		//Left grip becomes two hand optional mode
+		bindings[13].bHasChanged = LGrip != bindings[13].bPressed;
+		bindings[13].bPressed = LGrip;
+	}	
 
 	//Looking
 	axes1D[2] = RThumbstick.x;
