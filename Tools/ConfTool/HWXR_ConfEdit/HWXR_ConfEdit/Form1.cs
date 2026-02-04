@@ -27,6 +27,7 @@ namespace HWXR_ConfEdit
 
         string fovFile = "fov.txt";
         string confFile = "config.txt";
+        string handsFixFile = "handsfix.txt";
 
         string wxrFOVW = "104.5";
         string wxrFOVH = "104.5";
@@ -110,6 +111,12 @@ namespace HWXR_ConfEdit
             }
 
             if (lstFOVPresets.Items.Count > 0) lstFOVPresets.SelectedIndex = 0;
+
+            string handfixPath = Path.Combine(Application.StartupPath, handsFixFile);
+            if (File.Exists(handfixPath))
+            {
+                chkHandsFix.Checked = true;
+            }
         }
 
         private void EditConfFile(string findLineText, string newValue)
@@ -404,7 +411,7 @@ namespace HWXR_ConfEdit
 
         private void varB_ValueChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void varD_ValueChanged(object sender, EventArgs e)
@@ -447,6 +454,30 @@ namespace HWXR_ConfEdit
             else
             {
                 chkCombineReloadUse.Text = "FALSE";
+            }
+        }
+
+        private void chkHandsFix_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkHandsFix.Checked)
+            {
+                chkHandsFix.Text = "TRUE";
+
+                string handfixPath = Path.Combine(Application.StartupPath, handsFixFile);
+                if (!File.Exists(handfixPath))
+                {
+                    File.WriteAllText(handfixPath, "This will invert the hands, use this if your hands are upside down in-game (eg: unrecognized headset)");
+                }
+            }
+            else
+            {
+                chkHandsFix.Text = "FALSE";
+
+                string handfixPath = Path.Combine(Application.StartupPath, handsFixFile);
+                if (File.Exists(handfixPath))
+                {
+                    File.Delete(handfixPath);
+                }
             }
         }
     }

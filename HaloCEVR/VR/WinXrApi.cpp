@@ -298,6 +298,13 @@ void WinXrApi::Init()
 		hmdModel = "QUEST 2";
 	}
 
+	//Look for the flag to force hand fix ON always:
+	std::filesystem::path handFixFile = std::filesystem::current_path() / "VR" / "handsfix.txt";
+
+	if (std::filesystem::exists(handFixFile) && std::filesystem::is_regular_file(handFixFile)) {
+		hmdMake = "FORCE FIX HANDS";
+	}
+
 	Logger::log << "[WinXrApi] starting UDP listener ..." << std::endl;
 	udpReader = new WinXrApiUDP();
 
@@ -582,7 +589,7 @@ void WinXrApi::UpdatePoses()
 		}
 
 		//PICO and Quest 2 are both tested to need the hand orientation flipped, assume the same for Quest Pro for now
-		if (hmdMake == "PICO" || hmdModel == "QUEST 2") {
+		if (hmdMake == "PICO" || hmdModel == "QUEST 2" || hmdMake == "PLAY FOR DREAM" || hmdMake == "FORCE FIX HANDS") {
 			UpsideDownHandsFix = true;
 		}
 		else {
