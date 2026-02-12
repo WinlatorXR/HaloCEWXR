@@ -28,6 +28,8 @@ Thanks to GmoLargey for testing!
 
 Thanks to ☆- Tee -☆ from the TeamBeef Discord for the idea of the combined Use + Reload button mode (in the ConfTool)
 
+Thanks to gibst4r from the TeamBeef Discord for the idea of combined 6DOF motion plus a Non-VR mode (in the ConfTool)
+
 # Current way of running the game in WinlatorXR:
 
 * Build the d3d9 DLL
@@ -97,6 +99,7 @@ NOTE: If you start this on a PC or other device and it doesn't get past the load
 * Ability to disable thumbstick turn entirely
 * AER stereo 3D support
 * Optional mode to combine Reload and Use buttons
+* Optional Seated Non-VR mode (play like a regular game, with added 6DOF motion tracking)
 
 
 # Stretch-Goal(s) / Unlikely Bonus Features:
