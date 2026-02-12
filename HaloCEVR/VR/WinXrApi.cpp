@@ -176,6 +176,35 @@ void WinXrApi::Init()
 	std::filesystem::path versionPath = dirPath / "version";
 	std::filesystem::path fallbackVersion = fallbackDir / "version";
 
+	//Quick check for the Non VR Mode Flag file first
+	std::filesystem::path nonVRFile = std::filesystem::current_path() / "VR" / "nonvr.txt";
+
+	if (std::filesystem::exists(nonVRFile) && std::filesystem::is_regular_file(nonVRFile)) {
+		NonVRMode = true;
+		Game::instance.bEnableAltEyeRendering = false; //AER mode disabled now
+
+		try {
+			std::ifstream nonVRScaleFile(nonVRFile);
+
+			std::string nonVRScale;
+
+			if (nonVRScaleFile.is_open()) {
+				std::getline(nonVRScaleFile, nonVRScale);
+				nonVRScaleFile.close();
+			}
+
+			float f = std::stof(nonVRScale);
+
+			NonVRScaleViewAng = f;
+		}
+		catch (const std::filesystem::filesystem_error& e) {
+
+		}
+		catch (const std::exception& e) {
+
+		}
+	}
+
 	if (std::filesystem::exists(tmpPath) && std::filesystem::is_directory(tmpPath)) {
 		if (std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath)) {
 			//Nothing to do
@@ -222,7 +251,12 @@ void WinXrApi::Init()
 		try {
 			std::ofstream verFile(fallbackVersion);
 			if (verFile.is_open()) {
-				verFile << "0.2";
+				if (NonVRMode) {
+					verFile << "0.3";
+				}
+				else {
+					verFile << "0.2";
+				}
 				verFile.close();
 			}
 			else {
@@ -308,15 +342,23 @@ void WinXrApi::Init()
 	Logger::log << "[WinXrApi] starting UDP listener ..." << std::endl;
 	udpReader = new WinXrApiUDP();
 
-	std::string aerMode = "0";
-
-	if (Game::instance.bEnableAltEyeRendering) {
-		aerMode = "2";
+	if (NonVRMode) {
+		if (udpReader) {
+			//Now we send the Non VR mode enable and target FOV of WinlatorXR at startup
+			udpReader->SendData("0 0 2 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+		}
 	}
+	else {
+		std::string aerMode = "0";
 
-	if (udpReader) {
-		//Now we send the VR mode enable and target FOV of WinlatorXR at startup
-		udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+		if (Game::instance.bEnableAltEyeRendering) {
+			aerMode = "2";
+		}
+
+		if (udpReader) {
+			//Now we send the VR mode enable and target FOV of WinlatorXR at startup
+			udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+		}
 	}
 }
 
@@ -428,21 +470,34 @@ void WinXrApi::Shutdown()
 void WinXrApi::SendHapticVibration(float lControllerStrength, float rControllerStrength) {
 	bool sendHaptics = Game::instance.c_EnableHaptics->Value();
 
-	std::string aerMode = "0";
-
-	if (Game::instance.bEnableAltEyeRendering) {
-		aerMode = "2";
-	}
-
-	if (udpReader) {
-		//As of version 0.2 now we send a bit of extra UDP data always (LVibration, RVibration, VR mode, SBS, target FOV W, target FOV H), WinlatorXR does the rest
-		if (sendHaptics) {
-			udpReader->SendData(std::to_string(lControllerStrength) + " " + std::to_string(rControllerStrength) + " 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
-		}
-		else {
-			udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+	if (NonVRMode) {
+		if (udpReader) {
+			//Now we send the Non VR mode if enabled plus haptics data
+			if (sendHaptics) {
+				udpReader->SendData(std::to_string(lControllerStrength) + " " + std::to_string(rControllerStrength) + " 2 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			}
+			else {
+				udpReader->SendData("0 0 2 0 " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			}
 		}
 	}
+	else {
+		std::string aerMode = "0";
+
+		if (Game::instance.bEnableAltEyeRendering) {
+			aerMode = "2";
+		}
+
+		if (udpReader) {
+			//As of version 0.2 now we send a bit of extra UDP data always (LVibration, RVibration, VR mode, SBS, target FOV W, target FOV H), WinlatorXR does the rest
+			if (sendHaptics) {
+				udpReader->SendData(std::to_string(lControllerStrength) + " " + std::to_string(rControllerStrength) + " 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			}
+			else {
+				udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
+			}
+		}
+	}	
 }
 
 int WinXrApi::GetViewWidth() {
@@ -512,6 +567,14 @@ void WinXrApi::UpdatePoses()
 			}
 		}
 
+		if (NonVRMode) {
+			//Extra bools returned here for Immersive Mode and SBS (unused in this game)
+			IsImmersiveMode = buttonBools[19];
+		}
+		else {
+			IsImmersiveMode = true;
+		}
+
 		//FLOATS:
 		//Left Hand Quaternion X, Left Hand Quaternion Y, Left Hand Quaternion Z, Left Hand Quaternion W, Left Hand Thumbstick X, Left Hand Thumbstick Y, 
 		//Left Hand X Position, Left Hand Y Position, Left Hand Z Position,
@@ -555,6 +618,11 @@ void WinXrApi::UpdatePoses()
 		}
 
 		HMDQuat = Vector4(floats[18], floats[19], floats[20], floats[21]);
+
+		if (!IsImmersiveMode) {
+			HMDQuat = ScaleQuaternionRotation(HMDQuat, NonVRScaleViewAng);
+		}
+
 		HMDPos = Vector3(floats[22], floats[23], floats[24]);
 
 		IPDVal = floats[25];
@@ -729,6 +797,18 @@ Vector4 WinXrApi::QuaternionMultiply(const Vector4& q1, const Vector4& q2) {
 		q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w,
 		q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
 	);
+}
+
+Vector4 WinXrApi::ScaleQuaternionRotation(Vector4 q1, float scale) {
+	float angle = 2 * acos(q1.w);
+	float newAngle = angle * scale;
+	float scaleFactor = sin(newAngle / 2) / sin(angle / 2);
+	return {
+		q1.x * scaleFactor,
+		q1.y * scaleFactor,
+		q1.z * scaleFactor,
+		cos(newAngle / 2)
+	};
 }
 
 Matrix4 WinXrApi::RotationFromDirection(Vector3 direction) {
@@ -924,7 +1004,7 @@ void WinXrApi::UpdateInputs()
 		//Jump
 		bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
 		bindings[0].bPressed = LGrip;
-	}	
+	}
 
 	//Switch Grenades
 	bindings[1].bHasChanged = L_X != bindings[1].bPressed;
@@ -981,7 +1061,7 @@ void WinXrApi::UpdateInputs()
 		//Left grip becomes two hand optional mode
 		bindings[13].bHasChanged = LGrip != bindings[13].bPressed;
 		bindings[13].bPressed = LGrip;
-	}	
+	}
 
 	//Looking
 	axes1D[2] = RThumbstick.x;
@@ -1279,10 +1359,10 @@ void WinXrApi::PreDrawFrame(struct Renderer* renderer, float deltaTime)
 
 		Game::instance.inGameRenderer.DrawRenderTarget(uiTexture, pos, rot, size, false);
 
-		//AER toggle on/off
+		//AER toggle on/off only for true VR mode
 		if (R_A) {
 			if (!R_A_Once) {
-				Game::instance.bEnableAltEyeRendering = !Game::instance.bEnableAltEyeRendering;
+				if (!NonVRMode) Game::instance.bEnableAltEyeRendering = !Game::instance.bEnableAltEyeRendering;
 				R_A_Once = true;
 			}
 		}

@@ -28,6 +28,7 @@ namespace HWXR_ConfEdit
         string fovFile = "fov.txt";
         string confFile = "config.txt";
         string handsFixFile = "handsfix.txt";
+        string nonVRFile = "nonvr.txt";
 
         string wxrFOVW = "104.5";
         string wxrFOVH = "104.5";
@@ -116,6 +117,12 @@ namespace HWXR_ConfEdit
             if (File.Exists(handfixPath))
             {
                 chkHandsFix.Checked = true;
+            }
+
+            string nonVRPath = Path.Combine(Application.StartupPath, nonVRFile);
+            if (File.Exists(nonVRPath))
+            {
+                chkSeatedNonVR.Checked = true;
             }
         }
 
@@ -424,6 +431,7 @@ namespace HWXR_ConfEdit
             if (chkAER.Checked)
             {
                 chkAER.Text = "TRUE";
+                chkSeatedNonVR.Checked = false;
             }
             else
             {
@@ -479,6 +487,38 @@ namespace HWXR_ConfEdit
                     File.Delete(handfixPath);
                 }
             }
+        }
+
+        private void chkSeatedNonVR_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSeatedNonVR.Checked)
+            {
+                chkSeatedNonVR.Text = "TRUE";
+                chkAER.Checked = false;
+                lblNonVRWarn.Visible = true;
+
+                string nonVRPath = Path.Combine(Application.StartupPath, nonVRFile);
+                if (!File.Exists(nonVRPath))
+                {
+                    File.WriteAllText(nonVRPath, "2.0");
+                }
+            }
+            else
+            {
+                chkSeatedNonVR.Text = "FALSE";
+                lblNonVRWarn.Visible = false;
+
+                string nonVRPath = Path.Combine(Application.StartupPath, nonVRFile);
+                if (File.Exists(nonVRPath))
+                {
+                    File.Delete(nonVRPath);
+                }
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

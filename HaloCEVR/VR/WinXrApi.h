@@ -63,6 +63,7 @@ public:
 	float FOVV;
 	float FOVTotal = 1.0472f;
 	Vector4 QuaternionMultiply(const Vector4& q1, const Vector4& q2);
+	Vector4 ScaleQuaternionRotation(Vector4 q1, float scale);
 	Matrix4 RotationFromDirection(Vector3 direction);
 	Vector3 HMDPos;
 	Vector3 LHandPos;
@@ -88,6 +89,9 @@ public:
 	bool R_ThumbDown = false;
 	bool R_ThumbUp = false;
 	bool UpsideDownHandsFix = false;
+	bool NonVRMode = false;
+	float NonVRScaleViewAng = 2.0f;
+	bool IsImmersiveMode = true;
 	// End Interface IVR
 	~WinXrApi();
 
