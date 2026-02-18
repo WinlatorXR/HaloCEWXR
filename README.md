@@ -58,7 +58,7 @@ Thanks to gibst4r from the TeamBeef Discord for the idea of combined 6DOF motion
 -> Place this [config.txt](https://github.com/bigelod/HaloCEWXR/blob/master/ThirdParty/config.txt) in the VR folder
 
 # Optional: Run/debug the game on your development PC:
-We now have two was to do this
+We now have two ways to do this
 
 1.) Using the XrAPI UDP Test program:
 * Extract it from the ZIP and run it
