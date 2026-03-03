@@ -9,6 +9,7 @@
 #include "Helpers/Menus.h"
 #include "Helpers/Objects.h"
 #include "Helpers/Maths.h"
+#include "Helpers/Cutscene.h"
 
 #ifdef EMULATE_VR
 //#include "VR/VREmulator.h"
@@ -882,6 +883,8 @@ void Game::UpdateInputs()
 	VR_PROFILE_SCOPE(Game_UpdateInputs);
 	inputHandler.UpdateInputs(bInVehicle);
 
+	UpdateAltRoomscaleMode();
+
 #if USE_PROFILER
 	static bool bWasPressed = false;
 
@@ -900,6 +903,62 @@ void Game::CalculateSmoothedInput()
 {
 	VR_PROFILE_SCOPE(Game_CalculateSmoothedInput);
 	inputHandler.CalculateSmoothedInput();
+}
+
+void Game::UpdateAltRoomscaleMode()
+{
+	//For alternative roomscale movement method, using newer code from the upstream LivingFray mod project
+	VR_PROFILE_SCOPE(Game_UpdateRoomScaleMovement);
+
+	if (!bAltRoomscaleMode)
+	{
+		return;
+	}
+
+	UnitDynamicObject* Player = static_cast<UnitDynamicObject*>(Helpers::GetLocalPlayer());
+
+	const bool bNoPlayer = Player == nullptr;
+	const bool bInCutscene = Helpers::GetCutsceneData()->bInCutscene;
+
+	// Restrict roomscale movement to normal movement (there's probably an elegant way to determine if the player can move, but I haven't RE'd it)
+	if (bNoPlayer || bInCutscene || bInVehicle)
+	{
+		bIgnoreNextRoomScaleMovement = true;
+		return;
+	}
+
+	// Calculate real-world offset from last frame
+	Vector3 headPos = vr->GetHMDTransform(true) * Vector3(0.0f, 0.0f, 0.0f);
+
+	// Convert to game units
+	Vector3 desiredOffset = headPos * MetresToWorld(1.0f);
+	desiredOffset.z = 0.0f;
+
+	const float Rotation = vr->GetYawOffset() * (3.141593f / 180.0f);
+
+#if 0
+	inGameRenderer.DrawPolygon(Player->position + desiredOffset, Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), 4, MetresToWorld(0.25f), D3DCOLOR_ARGB(50, 85, 250, 239), false);
+#endif
+
+	// Directly adjust position, collisions are handled later in the tick
+	if (!bIgnoreNextRoomScaleMovement)
+	{
+		Player->position += desiredOffset;
+	}
+	bIgnoreNextRoomScaleMovement = false;
+
+	{
+		// Rotate desiredOffset by yaw offset
+		const float cosAngle = std::cos(Rotation);
+		const float sinAngle = std::sin(Rotation);
+		const float newX = desiredOffset.x * cosAngle - desiredOffset.y * sinAngle;
+		const float newY = desiredOffset.x * sinAngle + desiredOffset.y * cosAngle;
+		desiredOffset.x = newX;
+		desiredOffset.y = newY;
+	}
+
+	// Move the camera offset backwards to recentre the player
+	vr->SetLocationOffset(desiredOffset * WorldToMetres(1.0f) + vr->GetLocationOffset());
 }
 
 bool Game::GetCalculatedHandPositions(Matrix4& controllerTransform, Vector3& dominantHandPos, Vector3& offHand)

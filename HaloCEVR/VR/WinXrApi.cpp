@@ -179,6 +179,9 @@ void WinXrApi::Init()
 	//Quick check for the Non VR Mode Flag file first
 	std::filesystem::path nonVRFile = std::filesystem::current_path() / "VR" / "nonvr.txt";
 
+	//Also check for the alternative roomscale flag
+	std::filesystem::path altRoomscaleFile = std::filesystem::current_path() / "VR" / "altroomscale.txt";
+
 	if (std::filesystem::exists(nonVRFile) && std::filesystem::is_regular_file(nonVRFile)) {
 		NonVRMode = true;
 		Game::instance.bEnableAltEyeRendering = false; //AER mode disabled now
@@ -203,6 +206,11 @@ void WinXrApi::Init()
 		catch (const std::exception& e) {
 
 		}
+	}
+
+	if (std::filesystem::exists(altRoomscaleFile) && std::filesystem::is_regular_file(altRoomscaleFile)) {
+		//No need to read it, just enable alternative roomscale mode
+		Game::instance.bAltRoomscaleMode = true;
 	}
 
 	if (std::filesystem::exists(tmpPath) && std::filesystem::is_directory(tmpPath)) {
@@ -497,7 +505,7 @@ void WinXrApi::SendHapticVibration(float lControllerStrength, float rControllerS
 				udpReader->SendData("0 0 1 " + aerMode + " " + std::to_string(fovVarE) + " " + std::to_string(fovVarF));
 			}
 		}
-	}	
+	}
 }
 
 int WinXrApi::GetViewWidth() {
@@ -555,7 +563,7 @@ void WinXrApi::UpdatePoses()
 		std::vector<bool> buttonBools;
 
 		if (buttonString.empty()) {
-			buttonString = "FFFFFFFFFFFFFFFFFFF";
+			buttonString = "FFFFFFFFFFFFFFFFFFFFF";
 		}
 
 		for (char c : buttonString) {
@@ -596,9 +604,13 @@ void WinXrApi::UpdatePoses()
 			LThumbstick = Vector2(0, 0);
 
 			bool enableNonStationary = Game::instance.c_NonstationaryBoundary->Value();
-			if (!enableNonStationary) {
+			if (!enableNonStationary && !Game::instance.bAltRoomscaleMode) {
 				Game::instance.c_NonstationaryBoundary->SetValue(true); //Must be enabled if we disable thumbstick movement
 			}
+		}
+
+		if (Game::instance.bAltRoomscaleMode) {
+			Game::instance.c_NonstationaryBoundary->SetValue(false); //Alternate roomscale mode overrides the original non-stationary boundary movement system
 		}
 
 		if (LThumbstick.x != 0 || LThumbstick.y != 0) {
@@ -617,10 +629,18 @@ void WinXrApi::UpdatePoses()
 			RThumbstick = Vector2(0, 0);
 		}
 
-		HMDQuat = Vector4(floats[18], floats[19], floats[20], floats[21]);
-
-		if (!IsImmersiveMode) {
-			HMDQuat = ScaleQuaternionRotation(HMDQuat, NonVRScaleViewAng);
+		if (IsImmersiveMode) {
+			HMDQuat = Vector4(floats[18], floats[19], floats[20], floats[21]);
+		}
+		else {
+			try {
+				Vector4 tempHMDQuat = Vector4(floats[18], floats[19], floats[20], floats[21]);
+				HMDQuat = ScaleQuaternionRotation(tempHMDQuat, NonVRScaleViewAng);
+			}
+			catch (...) {
+				//Fallback method if the scaling function fails
+				HMDQuat = Vector4(floats[18], floats[19], floats[20], floats[21]);
+			}
 		}
 
 		HMDPos = Vector3(floats[22], floats[23], floats[24]);
@@ -800,14 +820,19 @@ Vector4 WinXrApi::QuaternionMultiply(const Vector4& q1, const Vector4& q2) {
 }
 
 Vector4 WinXrApi::ScaleQuaternionRotation(Vector4 q1, float scale) {
-	float angle = 2 * acos(q1.w);
+	float clamped_w = std::clamp(q1.w, -1.0f, 1.0f);
+	if (abs(clamped_w) > 0.999999f) {
+		return HMDQuat;
+	}
+
+	float angle = 2.0f * acos(clamped_w);
 	float newAngle = angle * scale;
-	float scaleFactor = sin(newAngle / 2) / sin(angle / 2);
+	float scaleFactor = sin(newAngle / 2.0f) / sin(angle / 2.0f);
 	return {
 		q1.x * scaleFactor,
 		q1.y * scaleFactor,
 		q1.z * scaleFactor,
-		cos(newAngle / 2)
+		cos(newAngle / 2.0f)
 	};
 }
 
@@ -996,12 +1021,12 @@ void WinXrApi::UpdateInputs()
 	//{ "TwoHandGrip", 'I' }
 
 	if (Game::instance.bCombineUseReload) {
-		//Jump
+		//Jump with B
 		bindings[0].bHasChanged = R_B != bindings[0].bPressed;
 		bindings[0].bPressed = R_B;
 	}
 	else {
-		//Jump
+		//Jump with Left Grip
 		bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
 		bindings[0].bPressed = LGrip;
 	}
@@ -1047,12 +1072,12 @@ void WinXrApi::UpdateInputs()
 	bindings[10].bPressed = LTrigger;
 
 	if (Game::instance.bCombineUseReload) {
-		//Reload
+		//Reload with A
 		bindings[11].bHasChanged = R_A != bindings[11].bPressed;
 		bindings[11].bPressed = R_A;
 	}
 	else {
-		//Reload
+		//Reload with B
 		bindings[11].bHasChanged = R_B != bindings[11].bPressed;
 		bindings[11].bPressed = R_B;
 	}
@@ -1361,10 +1386,10 @@ void WinXrApi::PreDrawFrame(struct Renderer* renderer, float deltaTime)
 
 		//AER toggle on/off only for true VR mode
 		if (R_A) {
-			if (!R_A_Once) {
-				if (!NonVRMode) Game::instance.bEnableAltEyeRendering = !Game::instance.bEnableAltEyeRendering;
-				R_A_Once = true;
+			if (!R_A_Once && !NonVRMode) {
+				Game::instance.bEnableAltEyeRendering = !Game::instance.bEnableAltEyeRendering;
 			}
+			R_A_Once = true;
 		}
 		else {
 			R_A_Once = false;
@@ -1374,8 +1399,12 @@ void WinXrApi::PreDrawFrame(struct Renderer* renderer, float deltaTime)
 		if (R_B) {
 			if (!R_B_Once) {
 				Game::instance.bAlwaysTwoHand = !Game::instance.bAlwaysTwoHand;
-				R_B_Once = true;
+
+				if (!Game::instance.bAlwaysTwoHand) {
+					Game::instance.bUseTwoHandAim = false;
+				}
 			}
+			R_B_Once = true;
 		}
 		else {
 			R_B_Once = false;

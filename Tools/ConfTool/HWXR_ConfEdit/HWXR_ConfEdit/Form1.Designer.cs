@@ -79,6 +79,8 @@
             this.label20 = new System.Windows.Forms.Label();
             this.lblNonVRWarn = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
+            this.chkAltRoomscaleMode = new System.Windows.Forms.CheckBox();
+            this.label22 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tbNonStationaryScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSwingSens)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.varA)).BeginInit();
@@ -102,7 +104,7 @@
             // 
             this.lblSaved.AutoSize = true;
             this.lblSaved.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSaved.Location = new System.Drawing.Point(684, 475);
+            this.lblSaved.Location = new System.Drawing.Point(684, 459);
             this.lblSaved.Name = "lblSaved";
             this.lblSaved.Size = new System.Drawing.Size(57, 17);
             this.lblSaved.TabIndex = 1;
@@ -116,7 +118,7 @@
             // 
             // tbNonStationaryScale
             // 
-            this.tbNonStationaryScale.Location = new System.Drawing.Point(87, 391);
+            this.tbNonStationaryScale.Location = new System.Drawing.Point(87, 375);
             this.tbNonStationaryScale.Maximum = 6;
             this.tbNonStationaryScale.Minimum = 1;
             this.tbNonStationaryScale.Name = "tbNonStationaryScale";
@@ -127,9 +129,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(501, 424);
+            this.btnSave.Location = new System.Drawing.Point(501, 408);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(240, 48);
+            this.btnSave.Size = new System.Drawing.Size(240, 36);
             this.btnSave.TabIndex = 3;
             this.btnSave.Text = "Save Conf Settings";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -139,7 +141,7 @@
             // 
             this.lblNonStationaryScale.AutoSize = true;
             this.lblNonStationaryScale.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNonStationaryScale.Location = new System.Drawing.Point(274, 361);
+            this.lblNonStationaryScale.Location = new System.Drawing.Point(274, 345);
             this.lblNonStationaryScale.Name = "lblNonStationaryScale";
             this.lblNonStationaryScale.Size = new System.Drawing.Size(17, 17);
             this.lblNonStationaryScale.TabIndex = 4;
@@ -149,7 +151,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(48, 319);
+            this.label2.Location = new System.Drawing.Point(48, 311);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(251, 17);
             this.label2.TabIndex = 5;
@@ -159,7 +161,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(48, 361);
+            this.label3.Location = new System.Drawing.Point(48, 345);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(220, 17);
             this.label3.TabIndex = 6;
@@ -169,7 +171,7 @@
             // 
             this.chkNonStationaryBoundary.AutoSize = true;
             this.chkNonStationaryBoundary.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkNonStationaryBoundary.Location = new System.Drawing.Point(305, 320);
+            this.chkNonStationaryBoundary.Location = new System.Drawing.Point(305, 312);
             this.chkNonStationaryBoundary.Name = "chkNonStationaryBoundary";
             this.chkNonStationaryBoundary.Size = new System.Drawing.Size(64, 17);
             this.chkNonStationaryBoundary.TabIndex = 7;
@@ -181,7 +183,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(48, 442);
+            this.label4.Location = new System.Drawing.Point(48, 426);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(182, 17);
             this.label4.TabIndex = 8;
@@ -189,7 +191,7 @@
             // 
             // tbSwingSens
             // 
-            this.tbSwingSens.Location = new System.Drawing.Point(87, 472);
+            this.tbSwingSens.Location = new System.Drawing.Point(87, 456);
             this.tbSwingSens.Maximum = 6;
             this.tbSwingSens.Minimum = 1;
             this.tbSwingSens.Name = "tbSwingSens";
@@ -202,7 +204,7 @@
             // 
             this.lblSwingSens.AutoSize = true;
             this.lblSwingSens.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSwingSens.Location = new System.Drawing.Point(236, 442);
+            this.lblSwingSens.Location = new System.Drawing.Point(236, 426);
             this.lblSwingSens.Name = "lblSwingSens";
             this.lblSwingSens.Size = new System.Drawing.Size(17, 17);
             this.lblSwingSens.TabIndex = 10;
@@ -214,7 +216,7 @@
             this.chkBtnMelee.Checked = true;
             this.chkBtnMelee.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBtnMelee.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkBtnMelee.Location = new System.Drawing.Point(654, 288);
+            this.chkBtnMelee.Location = new System.Drawing.Point(654, 272);
             this.chkBtnMelee.Name = "chkBtnMelee";
             this.chkBtnMelee.Size = new System.Drawing.Size(60, 17);
             this.chkBtnMelee.TabIndex = 12;
@@ -226,7 +228,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(485, 286);
+            this.label5.Location = new System.Drawing.Point(485, 270);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(163, 17);
             this.label5.TabIndex = 11;
@@ -238,7 +240,7 @@
             this.chkEnableHaptics.Checked = true;
             this.chkEnableHaptics.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkEnableHaptics.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkEnableHaptics.Location = new System.Drawing.Point(654, 253);
+            this.chkEnableHaptics.Location = new System.Drawing.Point(654, 237);
             this.chkEnableHaptics.Name = "chkEnableHaptics";
             this.chkEnableHaptics.Size = new System.Drawing.Size(60, 17);
             this.chkEnableHaptics.TabIndex = 14;
@@ -250,7 +252,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(526, 251);
+            this.label6.Location = new System.Drawing.Point(526, 235);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(122, 17);
             this.label6.TabIndex = 13;
@@ -260,7 +262,7 @@
             // 
             this.chkDisableThumbTurn.AutoSize = true;
             this.chkDisableThumbTurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkDisableThumbTurn.Location = new System.Drawing.Point(305, 254);
+            this.chkDisableThumbTurn.Location = new System.Drawing.Point(305, 246);
             this.chkDisableThumbTurn.Name = "chkDisableThumbTurn";
             this.chkDisableThumbTurn.Size = new System.Drawing.Size(64, 17);
             this.chkDisableThumbTurn.TabIndex = 16;
@@ -272,7 +274,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(84, 253);
+            this.label7.Location = new System.Drawing.Point(84, 245);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(215, 17);
             this.label7.TabIndex = 15;
@@ -282,7 +284,7 @@
             // 
             this.chkDisableThumbMove.AutoSize = true;
             this.chkDisableThumbMove.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkDisableThumbMove.Location = new System.Drawing.Point(305, 288);
+            this.chkDisableThumbMove.Location = new System.Drawing.Point(305, 280);
             this.chkDisableThumbMove.Name = "chkDisableThumbMove";
             this.chkDisableThumbMove.Size = new System.Drawing.Size(64, 17);
             this.chkDisableThumbMove.TabIndex = 18;
@@ -294,7 +296,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(67, 285);
+            this.label8.Location = new System.Drawing.Point(67, 277);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(232, 17);
             this.label8.TabIndex = 17;
@@ -314,7 +316,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(20, 219);
+            this.label10.Location = new System.Drawing.Point(20, 213);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(139, 24);
             this.label10.TabIndex = 23;
@@ -324,7 +326,7 @@
             // 
             this.lblSavedFOV.AutoSize = true;
             this.lblSavedFOV.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSavedFOV.Location = new System.Drawing.Point(684, 219);
+            this.lblSavedFOV.Location = new System.Drawing.Point(684, 207);
             this.lblSavedFOV.Name = "lblSavedFOV";
             this.lblSavedFOV.Size = new System.Drawing.Size(57, 17);
             this.lblSavedFOV.TabIndex = 24;
@@ -333,9 +335,9 @@
             // 
             // btnApplyPreset
             // 
-            this.btnApplyPreset.Location = new System.Drawing.Point(501, 113);
+            this.btnApplyPreset.Location = new System.Drawing.Point(501, 115);
             this.btnApplyPreset.Name = "btnApplyPreset";
-            this.btnApplyPreset.Size = new System.Drawing.Size(240, 48);
+            this.btnApplyPreset.Size = new System.Drawing.Size(240, 36);
             this.btnApplyPreset.TabIndex = 25;
             this.btnApplyPreset.Text = "Apply and Save Preset FOV";
             this.btnApplyPreset.UseVisualStyleBackColor = true;
@@ -353,9 +355,9 @@
             // 
             // btnSaveCustomFOV
             // 
-            this.btnSaveCustomFOV.Location = new System.Drawing.Point(501, 167);
+            this.btnSaveCustomFOV.Location = new System.Drawing.Point(501, 168);
             this.btnSaveCustomFOV.Name = "btnSaveCustomFOV";
-            this.btnSaveCustomFOV.Size = new System.Drawing.Size(240, 48);
+            this.btnSaveCustomFOV.Size = new System.Drawing.Size(240, 36);
             this.btnSaveCustomFOV.TabIndex = 27;
             this.btnSaveCustomFOV.Text = "Apply and Save Custom FOV";
             this.btnSaveCustomFOV.UseVisualStyleBackColor = true;
@@ -365,7 +367,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(162, 172);
+            this.label11.Location = new System.Drawing.Point(162, 160);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(143, 39);
             this.label11.TabIndex = 28;
@@ -395,7 +397,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(314, 169);
+            this.label12.Location = new System.Drawing.Point(314, 157);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(23, 17);
             this.label12.TabIndex = 31;
@@ -405,7 +407,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(398, 169);
+            this.label13.Location = new System.Drawing.Point(398, 157);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(23, 17);
             this.label13.TabIndex = 32;
@@ -414,7 +416,7 @@
             // varA
             // 
             this.varA.DecimalPlaces = 2;
-            this.varA.Location = new System.Drawing.Point(343, 169);
+            this.varA.Location = new System.Drawing.Point(343, 157);
             this.varA.Maximum = new decimal(new int[] {
             3,
             0,
@@ -437,7 +439,7 @@
             // 
             // varB
             // 
-            this.varB.Location = new System.Drawing.Point(427, 169);
+            this.varB.Location = new System.Drawing.Point(427, 157);
             this.varB.Maximum = new decimal(new int[] {
             150,
             0,
@@ -456,7 +458,7 @@
             // varC
             // 
             this.varC.DecimalPlaces = 2;
-            this.varC.Location = new System.Drawing.Point(343, 195);
+            this.varC.Location = new System.Drawing.Point(343, 183);
             this.varC.Maximum = new decimal(new int[] {
             3,
             0,
@@ -481,7 +483,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(314, 195);
+            this.label14.Location = new System.Drawing.Point(314, 183);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(23, 17);
             this.label14.TabIndex = 35;
@@ -489,7 +491,7 @@
             // 
             // varD
             // 
-            this.varD.Location = new System.Drawing.Point(427, 195);
+            this.varD.Location = new System.Drawing.Point(427, 183);
             this.varD.Maximum = new decimal(new int[] {
             150,
             0,
@@ -509,7 +511,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(398, 195);
+            this.label15.Location = new System.Drawing.Point(398, 183);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(24, 17);
             this.label15.TabIndex = 37;
@@ -519,7 +521,7 @@
             // 
             this.chkAER.AutoSize = true;
             this.chkAER.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkAER.Location = new System.Drawing.Point(654, 319);
+            this.chkAER.Location = new System.Drawing.Point(654, 303);
             this.chkAER.Name = "chkAER";
             this.chkAER.Size = new System.Drawing.Size(64, 17);
             this.chkAER.TabIndex = 40;
@@ -531,7 +533,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(432, 318);
+            this.label16.Location = new System.Drawing.Point(432, 302);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(216, 17);
             this.label16.TabIndex = 39;
@@ -541,7 +543,7 @@
             // 
             this.chkSnapTurn.AutoSize = true;
             this.chkSnapTurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkSnapTurn.Location = new System.Drawing.Point(654, 348);
+            this.chkSnapTurn.Location = new System.Drawing.Point(654, 332);
             this.chkSnapTurn.Name = "chkSnapTurn";
             this.chkSnapTurn.Size = new System.Drawing.Size(64, 17);
             this.chkSnapTurn.TabIndex = 42;
@@ -553,7 +555,7 @@
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(482, 346);
+            this.label17.Location = new System.Drawing.Point(482, 330);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(166, 17);
             this.label17.TabIndex = 41;
@@ -563,7 +565,7 @@
             // 
             this.lblSmoothTurn.AutoSize = true;
             this.lblSmoothTurn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSmoothTurn.Location = new System.Drawing.Point(654, 368);
+            this.lblSmoothTurn.Location = new System.Drawing.Point(654, 352);
             this.lblSmoothTurn.Name = "lblSmoothTurn";
             this.lblSmoothTurn.Size = new System.Drawing.Size(87, 13);
             this.lblSmoothTurn.TabIndex = 43;
@@ -573,7 +575,7 @@
             // 
             this.chkCombineReloadUse.AutoSize = true;
             this.chkCombineReloadUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkCombineReloadUse.Location = new System.Drawing.Point(654, 391);
+            this.chkCombineReloadUse.Location = new System.Drawing.Point(654, 375);
             this.chkCombineReloadUse.Name = "chkCombineReloadUse";
             this.chkCombineReloadUse.Size = new System.Drawing.Size(64, 17);
             this.chkCombineReloadUse.TabIndex = 45;
@@ -585,7 +587,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(424, 390);
+            this.label18.Location = new System.Drawing.Point(424, 374);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(224, 17);
             this.label18.TabIndex = 44;
@@ -596,7 +598,7 @@
             this.chkHandsFix.AutoSize = true;
             this.chkHandsFix.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkHandsFix.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.chkHandsFix.Location = new System.Drawing.Point(654, 506);
+            this.chkHandsFix.Location = new System.Drawing.Point(654, 509);
             this.chkHandsFix.Name = "chkHandsFix";
             this.chkHandsFix.Size = new System.Drawing.Size(64, 17);
             this.chkHandsFix.TabIndex = 47;
@@ -609,7 +611,7 @@
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label19.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label19.Location = new System.Drawing.Point(500, 505);
+            this.label19.Location = new System.Drawing.Point(500, 508);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(148, 17);
             this.label19.TabIndex = 46;
@@ -620,7 +622,7 @@
             this.chkSeatedNonVR.AutoSize = true;
             this.chkSeatedNonVR.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkSeatedNonVR.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.chkSeatedNonVR.Location = new System.Drawing.Point(654, 529);
+            this.chkSeatedNonVR.Location = new System.Drawing.Point(654, 532);
             this.chkSeatedNonVR.Name = "chkSeatedNonVR";
             this.chkSeatedNonVR.Size = new System.Drawing.Size(64, 17);
             this.chkSeatedNonVR.TabIndex = 49;
@@ -633,7 +635,7 @@
             this.label20.AutoSize = true;
             this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label20.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label20.Location = new System.Drawing.Point(479, 528);
+            this.label20.Location = new System.Drawing.Point(479, 531);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(169, 17);
             this.label20.TabIndex = 48;
@@ -644,7 +646,7 @@
             this.lblNonVRWarn.AutoSize = true;
             this.lblNonVRWarn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNonVRWarn.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.lblNonVRWarn.Location = new System.Drawing.Point(21, 520);
+            this.lblNonVRWarn.Location = new System.Drawing.Point(21, 523);
             this.lblNonVRWarn.Name = "lblNonVRWarn";
             this.lblNonVRWarn.Size = new System.Drawing.Size(373, 26);
             this.lblNonVRWarn.TabIndex = 50;
@@ -657,17 +659,43 @@
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label21.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label21.Location = new System.Drawing.Point(442, 487);
+            this.label21.Location = new System.Drawing.Point(442, 461);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(206, 13);
             this.label21.TabIndex = 51;
             this.label21.Text = "ADVANCED SECTION (auto-saves)";
+            // 
+            // chkAltRoomscaleMode
+            // 
+            this.chkAltRoomscaleMode.AutoSize = true;
+            this.chkAltRoomscaleMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkAltRoomscaleMode.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.chkAltRoomscaleMode.Location = new System.Drawing.Point(654, 486);
+            this.chkAltRoomscaleMode.Name = "chkAltRoomscaleMode";
+            this.chkAltRoomscaleMode.Size = new System.Drawing.Size(64, 17);
+            this.chkAltRoomscaleMode.TabIndex = 53;
+            this.chkAltRoomscaleMode.Text = "FALSE";
+            this.chkAltRoomscaleMode.UseVisualStyleBackColor = true;
+            this.chkAltRoomscaleMode.CheckedChanged += new System.EventHandler(this.chkAltRoomscaleMode_CheckedChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.label22.Location = new System.Drawing.Point(441, 485);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(207, 17);
+            this.label22.TabIndex = 52;
+            this.label22.Text = "Alternate Roomscale Mode:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.chkAltRoomscaleMode);
+            this.Controls.Add(this.label22);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.lblNonVRWarn);
             this.Controls.Add(this.chkSeatedNonVR);
@@ -785,6 +813,8 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label lblNonVRWarn;
         private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.CheckBox chkAltRoomscaleMode;
+        private System.Windows.Forms.Label label22;
     }
 }
 

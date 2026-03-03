@@ -29,6 +29,7 @@ namespace HWXR_ConfEdit
         string confFile = "config.txt";
         string handsFixFile = "handsfix.txt";
         string nonVRFile = "nonvr.txt";
+        string altRoomscaleFile = "altroomscale.txt";
 
         string wxrFOVW = "104.5";
         string wxrFOVH = "104.5";
@@ -123,6 +124,12 @@ namespace HWXR_ConfEdit
             if (File.Exists(nonVRPath))
             {
                 chkSeatedNonVR.Checked = true;
+            }
+
+            string altRoomscalePath = Path.Combine(Application.StartupPath, altRoomscaleFile);
+            if (File.Exists(altRoomscalePath))
+            {
+                chkAltRoomscaleMode.Checked = true;
             }
         }
 
@@ -273,6 +280,7 @@ namespace HWXR_ConfEdit
             if (chkNonStationaryBoundary.Checked)
             {
                 chkNonStationaryBoundary.Text = "TRUE";
+                chkAltRoomscaleMode.Checked = false;
             }
             else
             {
@@ -519,6 +527,31 @@ namespace HWXR_ConfEdit
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void chkAltRoomscaleMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAltRoomscaleMode.Checked)
+            {
+                chkNonStationaryBoundary.Checked = false;
+                chkAltRoomscaleMode.Text = "TRUE";
+
+                string altRoomscalePath = Path.Combine(Application.StartupPath, altRoomscaleFile);
+                if (!File.Exists(altRoomscalePath))
+                {
+                    File.WriteAllText(altRoomscalePath, "Alternative Roomscale Mode Enabled! Delete this file to turn it off");
+                }
+            }
+            else
+            {
+                chkAltRoomscaleMode.Text = "FALSE";
+
+                string altRoomscalePath = Path.Combine(Application.StartupPath, altRoomscaleFile);
+                if (File.Exists(altRoomscalePath))
+                {
+                    File.Delete(altRoomscalePath);
+                }
+            }
         }
     }
 }

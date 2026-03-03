@@ -63,6 +63,7 @@ public:
 
 	void UpdateInputs();
 	void CalculateSmoothedInput();
+	void UpdateAltRoomscaleMode(); //For alternative roomscale movement method from LivingFray mod
 
 	void UpdateCamera(float& yaw, float& pitch);
 	void SetMousePosition(int& x, int& y);
@@ -99,6 +100,7 @@ public:
 
 	bool bCombineUseReload = false;
 	bool bAlwaysTwoHand = false;
+	bool bAltRoomscaleMode = false; //For alternative roomscale movement method from LivingFray mod
 
 	Config config;
 
@@ -196,6 +198,8 @@ protected:
 	bool bHasShutdown = true;
 
 	bool bWasLoading = false;
+
+	bool bIgnoreNextRoomScaleMovement = false; //For alternative roomscale movement method from LivingFray mod
 
 	//======Configs======//
 public:
