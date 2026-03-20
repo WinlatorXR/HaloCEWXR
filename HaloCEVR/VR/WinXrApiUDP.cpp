@@ -32,12 +32,31 @@ void WinXrApiUDP::ReceiveData()
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
 	serverAddr.sin_port = htons(udpPort);
 
+	bool useFallback = false;
+
 	try {
 		bind(udpSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	}
 	catch (const std::exception& e) {
-		Logger::log << "[WinXrUDP] Error starting UDP receiver: " << e.what() << std::endl;
-	}	
+		Logger::log << "[WinXrUDP] Error starting UDP receiver, trying fallback: " << e.what() << std::endl;
+		//useFallback = true; //Pending future 0.4 API with fallback support (eg: something else already used the main port)
+	}
+
+	if (useFallback) {
+		udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
+		struct sockaddr_in serverAddrFallback, clientAddrFallback;
+		memset(&serverAddrFallback, 0, sizeof(serverAddrFallback));
+		serverAddrFallback.sin_family = AF_INET;
+		serverAddrFallback.sin_addr.s_addr = INADDR_ANY;
+		serverAddrFallback.sin_port = htons(udpFallbackPort);
+
+		try {
+			bind(udpSocket, (struct sockaddr*)&serverAddrFallback, sizeof(serverAddrFallback));
+		}
+		catch (const std::exception& e) {
+			Logger::log << "[WinXrUDP] Error starting UDP receiver FALLBACK!: " << e.what() << std::endl;
+		}
+	}
 
 	while (true)
 	{
@@ -127,7 +146,7 @@ void WinXrApiUDP::SendData(std::string sendData)
 	catch (const std::exception& e)
 	{
 		Logger::log << "[WinXrUDP] Error sending UDP data: " << e.what() << std::endl;
-	}	
+	}
 }
 
 void WinXrApiUDP::KillReceiver()

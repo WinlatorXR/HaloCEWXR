@@ -23,6 +23,7 @@ public:
 
 private:
 	int udpPort = 7872;
+	int udpFallbackPort = 7873;
 	int udpSocket;
 	int udpSendPort = 7278;
 	int udpSendSocket;

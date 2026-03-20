@@ -265,6 +265,7 @@ void WinXrApi::Init()
 				else {
 					verFile << "0.2";
 				}
+				//verFile << "0.4"; //Pending future update with fallback port support
 				verFile.close();
 			}
 			else {
@@ -345,6 +346,13 @@ void WinXrApi::Init()
 
 	if (std::filesystem::exists(handFixFile) && std::filesystem::is_regular_file(handFixFile)) {
 		hmdMake = "FORCE FIX HANDS";
+	}
+
+	//Look for the flag to force thumbstick flip:
+	std::filesystem::path thumbFlipFile = std::filesystem::current_path() / "VR" / "thumbflip.txt";
+
+	if (std::filesystem::exists(thumbFlipFile) && std::filesystem::is_regular_file(thumbFlipFile)) {
+		flipThumbsticks = true;
 	}
 
 	Logger::log << "[WinXrApi] starting UDP listener ..." << std::endl;
@@ -670,11 +678,8 @@ void WinXrApi::UpdatePoses()
 
 		R_ThumbUp = buttonBools[16];
 		R_ThumbDown = buttonBools[17];
-
-		bool enableMeleeBtn = Game::instance.c_EnableButtonMelee->Value();
-		if (!enableMeleeBtn) {
-			R_ThumbDown = false;
-		}
+		L_ThumbUp = buttonBools[5];
+		L_ThumbDown = buttonBools[6];
 
 		//PICO and Quest 2 are both tested to need the hand orientation flipped, assume the same for Quest Pro for now
 		if (hmdMake == "PICO" || hmdModel == "QUEST 2" || hmdMake == "PLAY FOR DREAM" || hmdMake == "FORCE FIX HANDS") {
@@ -1020,45 +1025,7 @@ void WinXrApi::UpdateInputs()
 	//{ "EMU_MoveHandSwap", 'H' },
 	//{ "TwoHandGrip", 'I' }
 
-	if (Game::instance.bCombineUseReload) {
-		//Jump with B
-		bindings[0].bHasChanged = R_B != bindings[0].bPressed;
-		bindings[0].bPressed = R_B;
-	}
-	else {
-		//Jump with Left Grip
-		bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
-		bindings[0].bPressed = LGrip;
-	}
-
-	//Switch Grenades
-	bindings[1].bHasChanged = L_X != bindings[1].bPressed;
-	bindings[1].bPressed = L_X;
-
-	//Interact
-	bindings[2].bHasChanged = R_A != bindings[2].bPressed;
-	bindings[2].bPressed = R_A;
-
-	//Switch Weapons
-	bindings[3].bHasChanged = R_ThumbUp != bindings[3].bPressed;
-	bindings[3].bPressed = R_ThumbUp;
-
-	//Melee
-	bindings[4].bHasChanged = R_ThumbDown != bindings[4].bPressed;
-	bindings[4].bPressed = R_ThumbDown;
-
-	//Flashlight
-	bindings[5].bHasChanged = L_Y != bindings[5].bPressed;
-	bindings[5].bPressed = L_Y;
-
-	//Grenade
-	bindings[6].bHasChanged = RGrip != bindings[6].bPressed;
-	bindings[6].bPressed = RGrip;
-
-	//Fire
-	bindings[7].bHasChanged = RTrigger != bindings[7].bPressed;
-	bindings[7].bPressed = RTrigger;
-
+	//Unchangeable controls
 	//MenuBack
 	bindings[8].bHasChanged = L_Menu != bindings[8].bPressed;
 	bindings[8].bPressed = L_Menu;
@@ -1067,34 +1034,156 @@ void WinXrApi::UpdateInputs()
 	bindings[9].bHasChanged = LClick != bindings[9].bPressed;
 	bindings[9].bPressed = LClick;
 
-	//Zoom
-	bindings[10].bHasChanged = LTrigger != bindings[10].bPressed;
-	bindings[10].bPressed = LTrigger;
+	//TODO: New remap system to allow more control remapping(s) for XrAPI?
+	if (Game::instance.bLeftHanded) {
+		//Alternative bindings for left handed
+		if (Game::instance.bCombineUseReload) {
+			//Jump with Y
+			bindings[0].bHasChanged = L_Y != bindings[0].bPressed;
+			bindings[0].bPressed = L_Y;
+		}
+		else {
+			//Jump with Right Grip
+			bindings[0].bHasChanged = RGrip != bindings[0].bPressed;
+			bindings[0].bPressed = RGrip;
+		}
 
-	if (Game::instance.bCombineUseReload) {
-		//Reload with A
-		bindings[11].bHasChanged = R_A != bindings[11].bPressed;
-		bindings[11].bPressed = R_A;
+		//Switch Grenades with A
+		bindings[1].bHasChanged = R_A != bindings[1].bPressed;
+		bindings[1].bPressed = R_A;
+
+		//Interact with X
+		bindings[2].bHasChanged = L_X != bindings[2].bPressed;
+		bindings[2].bPressed = L_X;
+
+		//Flashlight with B
+		bindings[5].bHasChanged = R_B != bindings[5].bPressed;
+		bindings[5].bPressed = R_B;
+
+		//Grenade with L Grip
+		bindings[6].bHasChanged = LGrip != bindings[6].bPressed;
+		bindings[6].bPressed = LGrip;
+
+		//Fire with L Trigger
+		bindings[7].bHasChanged = LTrigger != bindings[7].bPressed;
+		bindings[7].bPressed = LTrigger;
+
+		//Zoom with R Trigger
+		bindings[10].bHasChanged = RTrigger != bindings[10].bPressed;
+		bindings[10].bPressed = RTrigger;
+
+		if (Game::instance.bCombineUseReload) {
+			//Reload with X
+			bindings[11].bHasChanged = L_X != bindings[11].bPressed;
+			bindings[11].bPressed = L_X;
+		}
+		else {
+			//Reload with Y
+			bindings[11].bHasChanged = L_Y != bindings[11].bPressed;
+			bindings[11].bPressed = L_Y;
+		}
+
+		if (Game::instance.bCombineUseReload) {
+			//Right grip becomes two hand optional mode
+			bindings[13].bHasChanged = RGrip != bindings[13].bPressed;
+			bindings[13].bPressed = RGrip;
+		}
 	}
 	else {
-		//Reload with B
-		bindings[11].bHasChanged = R_B != bindings[11].bPressed;
-		bindings[11].bPressed = R_B;
+		//DEFAULT right handed bindings
+		if (Game::instance.bCombineUseReload) {
+			//Jump with B
+			bindings[0].bHasChanged = R_B != bindings[0].bPressed;
+			bindings[0].bPressed = R_B;
+		}
+		else {
+			//Jump with Left Grip
+			bindings[0].bHasChanged = LGrip != bindings[0].bPressed;
+			bindings[0].bPressed = LGrip;
+		}
+
+		//Switch Grenades with X
+		bindings[1].bHasChanged = L_X != bindings[1].bPressed;
+		bindings[1].bPressed = L_X;
+
+		//Interact with A
+		bindings[2].bHasChanged = R_A != bindings[2].bPressed;
+		bindings[2].bPressed = R_A;
+
+		//Flashlight with Y
+		bindings[5].bHasChanged = L_Y != bindings[5].bPressed;
+		bindings[5].bPressed = L_Y;
+
+		//Grenade with R Grip
+		bindings[6].bHasChanged = RGrip != bindings[6].bPressed;
+		bindings[6].bPressed = RGrip;
+
+		//Fire with R Trigger
+		bindings[7].bHasChanged = RTrigger != bindings[7].bPressed;
+		bindings[7].bPressed = RTrigger;
+
+		//Zoom with L Trigger
+		bindings[10].bHasChanged = LTrigger != bindings[10].bPressed;
+		bindings[10].bPressed = LTrigger;
+
+		if (Game::instance.bCombineUseReload) {
+			//Reload with A
+			bindings[11].bHasChanged = R_A != bindings[11].bPressed;
+			bindings[11].bPressed = R_A;
+		}
+		else {
+			//Reload with B
+			bindings[11].bHasChanged = R_B != bindings[11].bPressed;
+			bindings[11].bPressed = R_B;
+		}
+
+		if (Game::instance.bCombineUseReload) {
+			//Left grip becomes two hand optional mode
+			bindings[13].bHasChanged = LGrip != bindings[13].bPressed;
+			bindings[13].bPressed = LGrip;
+		}
 	}
 
-	if (Game::instance.bCombineUseReload) {
-		//Left grip becomes two hand optional mode
-		bindings[13].bHasChanged = LGrip != bindings[13].bPressed;
-		bindings[13].bPressed = LGrip;
+	bool enableMeleeBtn = Game::instance.c_EnableButtonMelee->Value();
+	if (!enableMeleeBtn) {
+		R_ThumbDown = false;
+		L_ThumbDown = false;
 	}
 
-	//Looking
-	axes1D[2] = RThumbstick.x;
-	axes1D[3] = RThumbstick.y;
+	if (flipThumbsticks) {
+		//Switch Weapons
+		bindings[3].bHasChanged = L_ThumbUp != bindings[3].bPressed;
+		bindings[3].bPressed = L_ThumbUp;
 
-	//Movement
-	axes1D[0] = LThumbstick.x;
-	axes1D[1] = LThumbstick.y;
+		//Melee
+		bindings[4].bHasChanged = L_ThumbDown != bindings[4].bPressed;
+		bindings[4].bPressed = L_ThumbDown;
+
+		//Looking
+		axes1D[2] = LThumbstick.x;
+		axes1D[3] = LThumbstick.y;
+
+		//Movement
+		axes1D[0] = RThumbstick.x;
+		axes1D[1] = RThumbstick.y;
+	}
+	else {
+		//Switch Weapons
+		bindings[3].bHasChanged = R_ThumbUp != bindings[3].bPressed;
+		bindings[3].bPressed = R_ThumbUp;
+
+		//Melee
+		bindings[4].bHasChanged = R_ThumbDown != bindings[4].bPressed;
+		bindings[4].bPressed = R_ThumbDown;
+
+		//Looking
+		axes1D[2] = RThumbstick.x;
+		axes1D[3] = RThumbstick.y;
+
+		//Movement
+		axes1D[0] = LThumbstick.x;
+		axes1D[1] = LThumbstick.y;
+	}
 
 	//Extra movement tweaks
 	if (pastFirstFrame) {

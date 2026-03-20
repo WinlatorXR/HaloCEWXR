@@ -88,10 +88,13 @@ public:
 	bool L_Menu = false;
 	bool R_ThumbDown = false;
 	bool R_ThumbUp = false;
+	bool L_ThumbDown = false;
+	bool L_ThumbUp = false;
 	bool UpsideDownHandsFix = false;
 	bool NonVRMode = false;
 	float NonVRScaleViewAng = 2.0f;
 	bool IsImmersiveMode = true;
+	bool flipThumbsticks = false;
 	// End Interface IVR
 	~WinXrApi();
 

@@ -28,6 +28,7 @@ namespace HWXR_ConfEdit
         string fovFile = "fov.txt";
         string confFile = "config.txt";
         string handsFixFile = "handsfix.txt";
+        string swapThumbsFile = "thumbflip.txt";
         string nonVRFile = "nonvr.txt";
         string altRoomscaleFile = "altroomscale.txt";
 
@@ -118,6 +119,12 @@ namespace HWXR_ConfEdit
             if (File.Exists(handfixPath))
             {
                 chkHandsFix.Checked = true;
+            }
+
+            string thumbSwapPath = Path.Combine(Application.StartupPath, swapThumbsFile);
+            if (File.Exists(thumbSwapPath))
+            {
+                chkSwapThumbs.Checked = true;
             }
 
             string nonVRPath = Path.Combine(Application.StartupPath, nonVRFile);
@@ -246,6 +253,7 @@ namespace HWXR_ConfEdit
             EditConfFile("DisableThumbstickMovement = ", chkDisableThumbMove.Checked.ToString().ToLower());
             EditConfFile("DisableThumbstickRotation = ", chkDisableThumbTurn.Checked.ToString().ToLower());
             EditConfFile("SnapTurn = ", chkSnapTurn.Checked.ToString().ToLower());
+            EditConfFile("LeftHanded = ", chkLeftHanded.Checked.ToString().ToLower());
 
             if (chkAER.Checked)
             {
@@ -473,6 +481,18 @@ namespace HWXR_ConfEdit
             }
         }
 
+        private void chkLeftHanded_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkLeftHanded.Checked)
+            {
+                chkLeftHanded.Text = "TRUE";
+            }
+            else
+            {
+                chkLeftHanded.Text = "FALSE";
+            }
+        }
+
         private void chkHandsFix_CheckedChanged(object sender, EventArgs e)
         {
             if (chkHandsFix.Checked)
@@ -482,7 +502,7 @@ namespace HWXR_ConfEdit
                 string handfixPath = Path.Combine(Application.StartupPath, handsFixFile);
                 if (!File.Exists(handfixPath))
                 {
-                    File.WriteAllText(handfixPath, "This will invert the hands, use this if your hands are upside down in-game (eg: unrecognized headset)");
+                    File.WriteAllText(handfixPath, "This will invert the hands, use this if your hands are upside down in-game (eg: unrecognized headset). Delete this file to turn it off");
                 }
             }
             else
@@ -550,6 +570,30 @@ namespace HWXR_ConfEdit
                 if (File.Exists(altRoomscalePath))
                 {
                     File.Delete(altRoomscalePath);
+                }
+            }
+        }
+
+        private void chkSwapThumbs_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSwapThumbs.Checked)
+            {
+                chkSwapThumbs.Text = "TRUE";
+
+                string thumbSwapPath = Path.Combine(Application.StartupPath, swapThumbsFile);
+                if (!File.Exists(thumbSwapPath))
+                {
+                    File.WriteAllText(thumbSwapPath, "This will swap the thumbsticks eg: Left and Right. Delete this file to turn it off");
+                }
+            }
+            else
+            {
+                chkSwapThumbs.Text = "FALSE";
+
+                string thumbSwapPath = Path.Combine(Application.StartupPath, swapThumbsFile);
+                if (File.Exists(thumbSwapPath))
+                {
+                    File.Delete(thumbSwapPath);
                 }
             }
         }
